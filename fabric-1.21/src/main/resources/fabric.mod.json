@@ -1,0 +1,24 @@
+{
+	"schemaVersion": 1,
+	"id": "block-capture",
+	"version": "${version}",
+	"name": "Block Capture",
+	"description": "Capture any block (including modded) into a native-resolution .mcvox voxel file for mc-block-studio.",
+	"authors": [
+		"yunfang"
+	],
+	"contact": {},
+	"license": "MIT",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"com.yunfang.blockcapture.BlockCaptureFabricClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.16.0",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

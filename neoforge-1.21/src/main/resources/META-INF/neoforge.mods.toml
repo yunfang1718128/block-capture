@@ -1,0 +1,29 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license = "MIT"
+issueTrackerURL = "https://github.com/yunfang1718128/block-capture/issues"
+
+[[mods]]
+modId = "block_capture"
+version = "${version}"
+displayName = "Block Capture"
+description = '''Capture any block (including modded) into a native-resolution .mcvox voxel file for mc-block-studio.'''
+authors = "yunfang"
+displayTest = "IGNORE_ALL_VERSION"
+
+[[dependencies.block_capture]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.1.0,)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.block_capture]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.1,1.21.2)"
+ordering = "NONE"
+side = "CLIENT"
+
+[features.block_capture]
+javaVersion = "[21,)"
