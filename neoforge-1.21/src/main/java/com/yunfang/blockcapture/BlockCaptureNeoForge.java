@@ -3,7 +3,9 @@ package com.yunfang.blockcapture;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.yunfang.blockcapture.capture.CaptureManager;
 import com.yunfang.blockcapture.command.CaptureBlockCommand;
+import com.yunfang.blockcapture.dev.AutoVerify;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -16,7 +18,9 @@ import org.lwjgl.glfw.GLFW;
 
 /**
  * NeoForge entry point: one keybind plus the client command, and a tick that
- * drains whatever {@link CaptureManager} was asked to capture.
+ * drains whatever {@link CaptureManager} was asked to capture. It also ticks the
+ * dev-only {@link AutoVerify} hook, which does nothing unless the
+ * {@code blockcapture.verify} JVM property lists blocks to capture.
  */
 @Mod(value = BlockCaptureNeoForge.MOD_ID, dist = Dist.CLIENT)
 public class BlockCaptureNeoForge {
@@ -46,6 +50,7 @@ public class BlockCaptureNeoForge {
 	}
 
 	private void onClientTick(ClientTickEvent.Post event) {
+		AutoVerify.tick(Minecraft.getInstance());
 		while (CAPTURE_KEY.consumeClick()) {
 			CaptureManager.requestLookedAt();
 		}

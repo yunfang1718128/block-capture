@@ -3,6 +3,7 @@ package com.yunfang.blockcapture;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.yunfang.blockcapture.capture.CaptureManager;
 import com.yunfang.blockcapture.command.CaptureBlockCommand;
+import com.yunfang.blockcapture.dev.AutoVerify;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -12,7 +13,9 @@ import org.lwjgl.glfw.GLFW;
 
 /**
  * Fabric entry point: one keybind plus the client command, and a tick that
- * drains whatever {@link CaptureManager} was asked to capture.
+ * drains whatever {@link CaptureManager} was asked to capture. It also ticks the
+ * dev-only {@link AutoVerify} hook, which does nothing unless the
+ * {@code blockcapture.verify} JVM property lists blocks to capture.
  */
 public class BlockCaptureFabricClient implements ClientModInitializer {
 	private static final KeyMapping CAPTURE_KEY = new KeyMapping(
@@ -29,6 +32,7 @@ public class BlockCaptureFabricClient implements ClientModInitializer {
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> CaptureBlockCommand.register(dispatcher));
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			AutoVerify.tick(client);
 			while (CAPTURE_KEY.consumeClick()) {
 				CaptureManager.requestLookedAt();
 			}
