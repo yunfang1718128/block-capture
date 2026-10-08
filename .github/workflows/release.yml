@@ -1,0 +1,69 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "fabric-v*"
+      - "neoforge-v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve target loader from tag
+        id: target
+        run: |
+          ref="${GITHUB_REF_NAME}"
+          case "$ref" in
+            fabric-v*)   loader=fabric;   project=fabric-1.21;;
+            neoforge-v*) loader=neoforge; project=neoforge-1.21;;
+            *) echo "Unsupported release tag: $ref" >&2; exit 1;;
+          esac
+          echo "loader=$loader"   >> "$GITHUB_OUTPUT"
+          echo "project=$project" >> "$GITHUB_OUTPUT"
+          echo "Resolved: loader=$loader project=$project"
+
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build ${{ steps.target.outputs.loader }}
+        env:
+          PROJECT: ${{ steps.target.outputs.project }}
+        run: |
+          chmod +x ./gradlew
+          VERSION="${GITHUB_REF_NAME#*-v}"
+          # --configure-on-demand keeps the other loader's project (which may want
+          # a different toolchain) out of the configuration phase.
+          ./gradlew ":${PROJECT}:build" -Pmod_version="${VERSION}" --configure-on-demand --no-daemon --console=plain
+
+      - name: Collect jar with loader suffix
+        env:
+          LOADER: ${{ steps.target.outputs.loader }}
+          PROJECT: ${{ steps.target.outputs.project }}
+        run: |
+          mkdir -p dist
+          for f in "${PROJECT}"/build/libs/block-capture-*.jar; do
+            case "$f" in
+              *-sources.jar) continue;;
+            esac
+            base="$(basename "$f" .jar)"
+            cp "$f" "dist/${base}-${LOADER}.jar"
+          done
+          ls -l dist
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.jar
+          generate_release_notes: true

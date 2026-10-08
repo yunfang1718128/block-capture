@@ -1,0 +1,3 @@
+// Root aggregator. Each loader lives in its own subproject
+// (fabric-1.21, neoforge-1.21, ...) and shares the loader-agnostic
+// sources under common-1.21/ via explicit source directories.

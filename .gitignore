@@ -1,0 +1,41 @@
+# Gradle
+.gradle/
+build/
+out/
+
+# Eclipse
+bin/
+.eclipse/
+*.launch
+.settings/
+.classpath
+.project
+.factorypath
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code
+.vscode/
+
+# Run directories (world, logs) and captured output
+run/
+/block-capture/
+*.mcvox
+*.mcvox.quads.txt
+
+# Logs
+*.log
+
+# OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local dev notes / tooling (not published)
+PLAN.md
+HANDOFF.md
+run.ps1
