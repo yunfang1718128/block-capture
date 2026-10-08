@@ -86,19 +86,26 @@ public final class BlockCaptureService {
 		Minecraft client = Minecraft.getInstance();
 		long startedAt = System.nanoTime();
 
-		RenderShape shape = state.getRenderShape();
-		if (shape == RenderShape.INVISIBLE) {
-			throw new IOException("该方块不可见（没有可捕获的模型）");
-		}
-
 		BlockRenderDispatcher dispatcher = client.getBlockRenderer();
-		BakedModel model = dispatcher.getBlockModel(state);
-		if (model.isCustomRenderer()) {
-			throw new IOException("该方块要求自定义渲染，暂不支持捕获");
+		BakedModel model = null;
+		int modelQuads = 0;
+		List<Quad> quads = new ArrayList<>();
+
+		// INVISIBLE means vanilla never draws this state's model, and that is how
+		// signs, hanging signs, banners, skulls and decorated pots are declared in
+		// 1.21: their blockstate points at a stub model that carries a particle
+		// texture and no geometry at all, and the whole appearance comes from the
+		// block entity renderer. Skipping the model pass mirrors vanilla (its own
+		// block renderer skips INVISIBLE too) and keeps a modded INVISIBLE block
+		// from contributing whatever its stub or missing model happens to hold.
+		if (state.getRenderShape() != RenderShape.INVISIBLE) {
+			model = dispatcher.getBlockModel(state);
+			if (model.isCustomRenderer()) {
+				throw new IOException("该方块要求自定义渲染，暂不支持捕获");
+			}
+			modelQuads = collectModelQuads(state, model, quads);
 		}
 
-		List<Quad> quads = new ArrayList<>();
-		int modelQuads = collectModelQuads(state, model, quads);
 		int firstRendererLayer = quads.size();
 		BlockEntityCaptureService.Outcome renderer =
 				BlockEntityCaptureService.capture(state, quads, firstRendererLayer);
@@ -112,7 +119,8 @@ public final class BlockCaptureService {
 				: (renderer.rendered() ? MODE_RENDERER : MODE_MODEL);
 
 		TextureSampler sampler = new TextureSampler();
-		VoxelGrid grid = BlockVoxelizer.voxelize(quads, sampler, UNITS_PER_BLOCK, supersampleFactor(modelQuads, model, state));
+		int supersample = modelQuads == 0 ? 1 : supersampleFactor(modelQuads, model, state);
+		VoxelGrid grid = BlockVoxelizer.voxelize(quads, sampler, UNITS_PER_BLOCK, supersample);
 		int colored = grid.coloredVoxels();
 		if (colored == 0) {
 			throw new IOException("该方块的贴图无法读取，捕获为空");
