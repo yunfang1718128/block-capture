@@ -26,6 +26,11 @@ public final class McvoxHeader {
 	public String subject;
 	/** Full block state string, e.g. {@code oak_stairs[facing=east,half=bottom]}. */
 	public String blockState;
+	/**
+	 * How the geometry was obtained: {@code model}, {@code blockEntity}, or
+	 * {@code model+blockEntity}. Purely diagnostic — the studio ignores it.
+	 */
+	public String captureMode;
 
 	public McvoxHeader(
 			int formatVersion,
@@ -39,7 +44,8 @@ public final class McvoxHeader {
 			int animatedTick,
 			String generatedAt,
 			String subject,
-			String blockState) {
+			String blockState,
+			String captureMode) {
 		this.formatVersion = formatVersion;
 		this.entityId = entityId;
 		this.entityName = entityName;
@@ -52,5 +58,6 @@ public final class McvoxHeader {
 		this.generatedAt = generatedAt;
 		this.subject = subject;
 		this.blockState = blockState;
+		this.captureMode = captureMode;
 	}
 }

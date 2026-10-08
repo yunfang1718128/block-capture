@@ -10,6 +10,9 @@
 	"contact": {},
 	"license": "MIT",
 	"environment": "client",
+	"mixins": [
+		"block-capture.mixins.json"
+	],
 	"entrypoints": {
 		"client": [
 			"com.yunfang.blockcapture.BlockCaptureFabricClient"

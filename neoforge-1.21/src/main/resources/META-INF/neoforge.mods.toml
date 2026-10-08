@@ -11,6 +11,9 @@ description = '''Capture any block (including modded) into a native-resolution .
 authors = "yunfang"
 displayTest = "IGNORE_ALL_VERSION"
 
+[[mixins]]
+config = "block-capture.mixins.json"
+
 [[dependencies.block_capture]]
 modId = "neoforge"
 type = "required"

@@ -59,8 +59,9 @@ public final class CaptureManager {
 
 		try {
 			BlockCaptureService.Result result = BlockCaptureService.capture(state);
-			feedback(String.format("已捕获 %s（%dx%dx%d，%d 个体素）→ %s",
+			feedback(String.format("已捕获 %s（%s，%dx%dx%d，%d 个体素）→ %s",
 					result.blockId(),
+					modeLabel(result.captureMode()),
 					result.sizeX(), result.sizeY(), result.sizeZ(),
 					result.voxels(),
 					result.path().getFileName()));
@@ -87,6 +88,17 @@ public final class CaptureManager {
 
 	private static String id(BlockState state) {
 		return BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString();
+	}
+	/** Plain-language name for how the geometry was obtained. */
+	private static String modeLabel(String captureMode) {
+		switch (captureMode) {
+			case "model":
+				return "模型";
+			case "blockEntity":
+				return "方块实体渲染";
+			default:
+				return "模型 + 方块实体渲染";
+		}
 	}
 
 	private static void feedback(String message) {
