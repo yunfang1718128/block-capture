@@ -36,6 +36,11 @@ Thumbs.db
 desktop.ini
 
 # Local dev notes / tooling (not published)
+# 开发向文档一律不进仓库：交接简报、计划、本地构建/调试说明都放这些文件里。
 PLAN.md
 HANDOFF.md
+DEVELOPING.md
+CONTRIBUTING.md
+NOTES.md
+TODO.md
 run.ps1
